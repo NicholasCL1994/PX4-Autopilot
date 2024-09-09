@@ -1,0 +1,240 @@
+. ${R}etc/init.d/rc.mc_defaults
+
+param set-default MAV_TYPE 14
+
+# Set variables for Gazebo simulation
+PX4_SIMULATOR=${PX4_SIMULATOR:=gz}
+PX4_GZ_WORLD=${PX4_GZ_WORLD:=default}
+PX4_SIM_MODEL=${PX4_SIM_MODEL:=octo_cox_H}
+
+param set-default SIM_GZ_EN 1
+
+param set-default SENS_EN_GPSSIM 1
+param set-default SENS_EN_BAROSIM 0
+param set-default SENS_EN_MAGSIM 1
+
+# Set vehicle airframe
+param set-default CA_AIRFRAME 8
+
+param set-default SYS_HAS_GPS 1
+param set-default SYS_HAS_BARO 0
+param set-default SYS_HAS_MAG 1
+
+# Square quadrotor X with reverse turn direction
+param set-default CA_ROTOR_COUNT 8
+param set-default CA_ROTOR0_PX 0.25
+param set-default CA_ROTOR0_PY -0.32
+param set-default CA_ROTOR0_PZ 0.05
+param set-default CA_ROTOR0_TILT 1
+param set-default CA_ROTOR0_KM -0.05
+
+param set-default CA_ROTOR1_KM 0.05
+param set-default CA_ROTOR1_PX 0.25
+param set-default CA_ROTOR1_PY 0.32
+param set-default CA_ROTOR1_PZ 0.05
+param set-default CA_ROTOR1_TILT 2
+
+param set-default CA_ROTOR2_PX -0.25
+param set-default CA_ROTOR2_PY 0.32
+param set-default CA_ROTOR2_PZ 0.05
+param set-default CA_ROTOR2_TILT 3
+param set-default CA_ROTOR2_KM -0.05
+
+param set-default CA_ROTOR3_PX -0.25
+param set-default CA_ROTOR3_PY -0.32
+param set-default CA_ROTOR3_PZ 0.05
+param set-default CA_ROTOR3_TILT 4
+param set-default CA_ROTOR3_KM 0.05
+
+param set-default CA_ROTOR4_PX 0.25
+param set-default CA_ROTOR4_PY 0.32
+param set-default CA_ROTOR4_TILT 2
+param set-default CA_ROTOR4_PZ -0.05
+param set-default CA_ROTOR4_KM -0.05
+
+param set-default CA_ROTOR5_PX 0.25
+param set-default CA_ROTOR5_PY -0.32
+param set-default CA_ROTOR5_PZ -0.05
+param set-default CA_ROTOR5_TILT 1
+param set-default CA_ROTOR5_KM 0.05
+
+param set-default CA_ROTOR6_PX -0.25
+param set-default CA_ROTOR6_PY -0.32
+param set-default CA_ROTOR6_PZ -0.05
+param set-default CA_ROTOR6_TILT 4
+param set-default CA_ROTOR6_KM -0.05
+
+param set-default CA_ROTOR7_KM 0.05
+param set-default CA_ROTOR7_PX -0.25
+param set-default CA_ROTOR7_PY 0.32
+param set-default CA_ROTOR7_PZ -0.05
+param set-default CA_ROTOR7_TILT 3
+
+# Add tilt control
+param set-default CA_SV_TL0_MAXA 45
+param set-default CA_SV_TL0_MINA -45
+param set-default CA_SV_TL0_TD 0
+param set-default CA_SV_TL0_CT 0
+param set-default CA_SV_TL1_MAXA 45
+param set-default CA_SV_TL1_MINA -45
+param set-default CA_SV_TL1_TD 0
+param set-default CA_SV_TL1_CT 0
+param set-default CA_SV_TL2_MAXA 45
+param set-default CA_SV_TL2_MINA -45
+param set-default CA_SV_TL2_TD 0
+param set-default CA_SV_TL2_CT 0
+param set-default CA_SV_TL3_MAXA 45
+param set-default CA_SV_TL3_MINA -45
+param set-default CA_SV_TL3_TD 0
+param set-default CA_SV_TL3_CT 0
+param set-default CA_SV_TL_COUNT 4
+
+# Simulation parameters
+param set-default SIM_GZ_EC_FUNC1 101
+param set-default SIM_GZ_EC_FUNC2 102
+param set-default SIM_GZ_EC_FUNC3 103
+param set-default SIM_GZ_EC_FUNC4 104
+param set-default SIM_GZ_EC_FUNC5 105
+param set-default SIM_GZ_EC_FUNC6 106
+param set-default SIM_GZ_EC_FUNC7 107
+param set-default SIM_GZ_EC_FUNC8 108
+param set-default SIM_GZ_SV_FUNC1 201
+param set-default SIM_GZ_SV_FUNC2 202
+param set-default SIM_GZ_SV_FUNC3 203
+param set-default SIM_GZ_SV_FUNC4 204
+
+param set-default SIM_GZ_EC_MIN1 150
+param set-default SIM_GZ_EC_MIN2 150
+param set-default SIM_GZ_EC_MIN3 150
+param set-default SIM_GZ_EC_MIN4 150
+param set-default SIM_GZ_EC_MIN5 150
+param set-default SIM_GZ_EC_MIN6 150
+param set-default SIM_GZ_EC_MIN7 150
+param set-default SIM_GZ_EC_MIN8 150
+
+param set-default SIM_GZ_EC_MAX1 2000
+param set-default SIM_GZ_EC_MAX2 2000
+param set-default SIM_GZ_EC_MAX3 2000
+param set-default SIM_GZ_EC_MAX4 2000
+param set-default SIM_GZ_EC_MAX5 2000
+param set-default SIM_GZ_EC_MAX6 2000
+param set-default SIM_GZ_EC_MAX7 2000
+param set-default SIM_GZ_EC_MAX8 2000
+
+# Manual adjustment of PIDs
+param set-default MC_YAW_P 200
+param set_default MC_YAWRATE_P 10
+
+# #!/bin/sh
+# #
+# # @name NDT Tilting
+# #
+# # @type Tilting Multirotor
+# # @class Copter
+# #
+# # @output MAIN1 motor 1
+# # @output MAIN2 motor 2
+# # @output MAIN3 motor 3
+# # @output MAIN4 motor 4
+# # @output MAIN5 motor 5
+# # @output MAIN6 motor 6
+# # @output MAIN6 motor 7
+# # @output MAIN6 motor 8
+# # @output MAIN6 motor 9
+# # @output MAIN6 motor 10
+# # @output MAIN6 motor 11
+# # @output MAIN6 motor 12
+# #
+# # @output AUX1 motor 1
+# # @output AUX2 motor 2
+# # @output AUX3 motor 3
+# # @output AUX4 motor 4
+# #
+# # @maintainer Salvatore Marcellini <salvatore.marcellini@gmail.com>
+# #
+
+# . ${R}etc/init.d/rc.mc_defaults
+
+# PX4_SIMULATOR=${PX4_SIMULATOR:=gz}
+# PX4_GZ_WORLD=${PX4_GZ_WORLD:=default}
+# PX4_SIM_MODEL=${PX4_SIM_MODEL:=octo_cox_H}
+
+# param set-default SIM_GZ_EN 1
+
+# param set-default SENS_EN_GPSSIM 1
+# param set-default SENS_EN_BAROSIM 0
+# param set-default SENS_EN_MAGSIM 1
+
+# param set-default SYS_HAS_GPS 1
+# param set-default SYS_HAS_BARO 0
+# param set-default SYS_HAS_MAG 1
+
+# # param set-default SYS_CTRL_ALLOC 1 #dynamic allocation
+# param set-default CA_AIRFRAME 13 #Tilting Multirotor
+# param set-default CA_TILTING_TYPE 1 #Omnidirectional tilting drone
+
+# set MAV_TYPE 14
+
+# # Set all 8 channels
+# set PWM_OUT 12345678
+# set PWM_AUX_OUT 1234
+# param set-default CA_ROTOR_COUNT 8
+# param set-default CA_SV_TL_COUNT 4
+
+# #X-forward, Y-right
+# #CW:-1, CCW:-1
+# param set-default CA_ROTOR0_PX 0.375
+# param set-default CA_ROTOR0_PY 0.32
+# param set-default CA_ROTOR0_PZ 0.05
+# param set-default CA_ROTOR0_KM 0.05
+# param set-default CA_ROTOR1_KM -0.05
+# param set-default CA_ROTOR1_PX 0.375
+# param set-default CA_ROTOR1_PY -0.32
+# param set-default CA_ROTOR1_PZ 0.05
+# param set-default CA_ROTOR2_PX -0.375
+# param set-default CA_ROTOR2_PY -0.32
+# param set-default CA_ROTOR2_PZ 0.05
+# param set-default CA_ROTOR2_KM 0.05
+# param set-default CA_ROTOR3_PX -0.375
+# param set-default CA_ROTOR3_PY 0.32
+# param set-default CA_ROTOR3_PZ 0.05
+# param set-default CA_ROTOR3_KM -0.05
+# param set-default CA_ROTOR4_PX 0.375
+# param set-default CA_ROTOR4_PY -0.32
+# param set-default CA_ROTOR4_PZ -0.05
+# param set-default CA_ROTOR4_KM 0.05
+# param set-default CA_ROTOR5_PX 0.375
+# param set-default CA_ROTOR5_PY 0.32
+# param set-default CA_ROTOR5_PZ -0.05
+# param set-default CA_ROTOR5_KM -0.05
+# param set-default CA_ROTOR6_PX -0.375
+# param set-default CA_ROTOR6_PY 0.32
+# param set-default CA_ROTOR6_PZ -0.05
+# param set-default CA_ROTOR6_KM 0.05
+# param set-default CA_ROTOR7_KM -0.05
+# param set-default CA_ROTOR7_PX -0.375
+# param set-default CA_ROTOR7_PY -0.32
+# param set-default CA_ROTOR7_PZ -0.05
+
+# param set-default PWM_MAIN_FUNC1 101 #esc
+# param set-default PWM_MAIN_FUNC2 102
+# param set-default PWM_MAIN_FUNC3 103
+# param set-default PWM_MAIN_FUNC4 104
+# param set-default PWM_MAIN_FUNC5 105
+# param set-default PWM_MAIN_FUNC6 106
+# param set-default PWM_MAIN_FUNC7 107
+# param set-default PWM_MAIN_FUNC8 108
+# param set-default PWM_MAIN_FUNC9 201 #servo
+# param set-default PWM_MAIN_FUNC10 202
+# param set-default PWM_MAIN_FUNC11 203
+# param set-default PWM_MAIN_FUNC12 204
+
+# # Limits for tilting angles
+# param set-default CA_SV_TL0_MAXA 30
+# param set-default CA_SV_TL0_MINA -30
+# param set-default CA_SV_TL1_MAXA 30
+# param set-default CA_SV_TL1_MINA -30
+# param set-default CA_SV_TL2_MAXA 30
+# param set-default CA_SV_TL2_MINA -30
+# param set-default CA_SV_TL3_MAXA 30
+# param set-default CA_SV_TL3_MINA -30
