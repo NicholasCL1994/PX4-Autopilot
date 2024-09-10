@@ -14,7 +14,7 @@ param set-default SENS_EN_BAROSIM 0
 param set-default SENS_EN_MAGSIM 1
 
 # Set vehicle airframe
-param set-default CA_AIRFRAME 8
+param set-default CA_AIRFRAME 13
 
 param set-default SYS_HAS_GPS 1
 param set-default SYS_HAS_BARO 0
