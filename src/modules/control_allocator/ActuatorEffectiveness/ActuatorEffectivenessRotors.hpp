@@ -77,6 +77,7 @@ public:
 		bool yaw_by_differential_thrust_disabled{false};
 		bool propeller_torque_disabled_non_upwards{false}; ///< keeps propeller torque enabled for upward facing motors
 		bool three_dimensional_thrust_disabled{false}; ///< for handling of tiltrotor VTOL, as they pass in 1D thrust and collective tilt
+		bool andromeda_control{false};
 	};
 
 	ActuatorEffectivenessRotors(ModuleParams *parent, AxisConfiguration axis_config = AxisConfiguration::Configurable,
@@ -96,7 +97,7 @@ public:
 	}
 
 	static int computeEffectivenessMatrix(const Geometry &geometry,
-					      EffectivenessMatrix &effectiveness, int actuator_start_index = 0);
+					      EffectivenessMatrix &effectiveness, int actuator_start_index = 0, int matrix_num = 0);
 
 	bool addActuators(Configuration &configuration);
 
@@ -126,6 +127,8 @@ public:
 
 	void enableThreeDimensionalThrust(bool enable) { _geometry.three_dimensional_thrust_disabled = !enable; }
 
+	void enableAndromedaControl(bool enable) { _geometry.andromeda_control = !enable; }
+
 	uint32_t getMotors() const;
 	uint32_t getUpwardsMotors() const;
 	uint32_t getForwardsMotors() const;
@@ -153,4 +156,5 @@ private:
 	DEFINE_PARAMETERS(
 		(ParamInt<px4::params::CA_ROTOR_COUNT>) _param_ca_rotor_count
 	)
+
 };

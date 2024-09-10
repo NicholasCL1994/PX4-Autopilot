@@ -444,9 +444,13 @@ ControlAllocator::Run()
 			}
 		}
 
+		// PX4_INFO("number of effectiveness matrices: %i", (int)_num_control_allocation );
+
 		if (source != EffectivenessSource::ANDROMEDA ||
 		   		( source == EffectivenessSource::ANDROMEDA &&
 		     		_num_control_allocation == 1 ) ) {
+
+			// PX4_INFO("Entered ORIGINAL allocation loop!");
 
 			for (int i = 0; i < _num_control_allocation; ++i) {
 
@@ -467,7 +471,7 @@ ControlAllocator::Run()
 			}
 
 		} else {
-
+			// PX4_INFO("Entered ANDROMEDA allocation loop!");
 			//Vertical forces
 			_control_allocation[0]->setControlSetpoint(c[0]);
 			_control_allocation[0]->allocate();
@@ -523,6 +527,9 @@ ControlAllocator::Run()
 
 			_control_allocation[0]->setActuatorSetpoint(actuator_sp);
 			_control_allocation[1]->setActuatorSetpoint(servo_sp);
+
+			// servo_sp.print();
+			// actuator_sp.print();
 
 			//To do: check servo sp e actuator sp, uno è angolo e l'altro è pwm
 
@@ -688,7 +695,7 @@ ControlAllocator::update_effectiveness_matrix_if_needed(EffectivenessUpdateReaso
 
 			// Assign control effectiveness matrix
 			int total_num_actuators = config.num_actuators_matrix[i];
-			PX4_INFO("total number of actuators = %i", (int)total_num_actuators);
+			// PX4_INFO("total number of actuators = %i", (int)total_num_actuators);
 			_control_allocation[i]->setEffectivenessMatrix(config.effectiveness_matrices[i], config.trim[i],
 					config.linearization_point[i], total_num_actuators, reason == EffectivenessUpdateReason::CONFIGURATION_UPDATE);
 		}

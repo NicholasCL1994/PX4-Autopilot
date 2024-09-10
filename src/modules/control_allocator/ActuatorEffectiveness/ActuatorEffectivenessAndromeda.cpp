@@ -37,7 +37,8 @@ using namespace matrix;
 
 ActuatorEffectivenessAndromeda::ActuatorEffectivenessAndromeda(ModuleParams *parent)
 	: ModuleParams(parent),
-	  _mc_rotors(this, ActuatorEffectivenessRotors::AxisConfiguration::FixedUpwards, true),
+	  _mc_rotors_vertical(this, ActuatorEffectivenessRotors::AxisConfiguration::FixedUpwards, true),
+	  _mc_rotors_lateral(this, ActuatorEffectivenessRotors::AxisConfiguration::FixedUpwards, true),
 	  _tilts(this)
 {
 }
@@ -50,28 +51,23 @@ ActuatorEffectivenessAndromeda::getEffectivenessMatrix(Configuration &configurat
 		return false;
 	}
 
-	// MC motors
-	_mc_rotors.enableYawByDifferentialThrust(!_tilts.hasYawControl());
-	const bool rotors_added_successfully = _mc_rotors.addActuators(configuration);
+	bool rotors_added_successfully = false;
+
+	//Vertical forces matrix
+	configuration.selected_matrix = 0;
+	rotors_added_successfully = _mc_rotors_vertical.addActuators(configuration);
+
+	// Lateral forces matrix
+	configuration.selected_matrix = 1;
+	rotors_added_successfully = _mc_rotors_lateral.addActuators(configuration);
+
+	*configuration.num_actuators /=2;
 
 	// Tilts
-	_first_tilt_idx = configuration.num_actuators_matrix[0];
-	_tilts.updateTorqueSign(_mc_rotors.geometry());
+	configuration.selected_matrix = 0;
+	_first_tilt_idx = configuration.num_actuators_matrix[configuration.selected_matrix];
+
 	const bool tilts_added_successfully = _tilts.addActuators(configuration);
-
-	// Set offset such that tilts point upwards when control input == 0 (trim is 0 if min_angle == -max_angle).
-	// Note that we don't set configuration.trim here, because in the case of trim == +-1, yaw is always saturated
-	// and reduced to 0 with the sequential desaturation method. Instead we add it after.
-	_tilt_offsets.setZero();
-
-	for (int i = 0; i < _tilts.count(); ++i) {
-		float delta_angle = _tilts.config(i).max_angle - _tilts.config(i).min_angle;
-
-		if (delta_angle > FLT_EPSILON) {
-			float trim = -1.f - 2.f * _tilts.config(i).min_angle / delta_angle;
-			_tilt_offsets(_first_tilt_idx + i) = trim;
-		}
-	}
 
 	return (rotors_added_successfully && tilts_added_successfully);
 }
@@ -80,38 +76,14 @@ void ActuatorEffectivenessAndromeda::updateSetpoint(const matrix::Vector<float, 
 		int matrix_index, ActuatorVector &actuator_sp, const matrix::Vector<float, NUM_ACTUATORS> &actuator_min,
 		const matrix::Vector<float, NUM_ACTUATORS> &actuator_max)
 {
-	actuator_sp += _tilt_offsets;
-	// TODO: dynamic matrix update
 
-	bool yaw_saturated_positive = true;
-	bool yaw_saturated_negative = true;
+	for(int i=0; i<_servo_count; i++){
 
-	for (int i = 0; i < _tilts.count(); ++i) {
-
-		// custom yaw saturation logic: only declare yaw saturated if all tilts are at the negative or positive yawing limit
-		if (_tilts.getYawTorqueOfTilt(i) > FLT_EPSILON) {
-
-			if (yaw_saturated_positive && actuator_sp(i + _first_tilt_idx) < actuator_max(i + _first_tilt_idx) - FLT_EPSILON) {
-				yaw_saturated_positive = false;
-			}
-
-			if (yaw_saturated_negative && actuator_sp(i + _first_tilt_idx) > actuator_min(i + _first_tilt_idx) + FLT_EPSILON) {
-				yaw_saturated_negative = false;
-			}
-
-		} else if (_tilts.getYawTorqueOfTilt(i) < -FLT_EPSILON) {
-			if (yaw_saturated_negative && actuator_sp(i + _first_tilt_idx) < actuator_max(i + _first_tilt_idx) - FLT_EPSILON) {
-				yaw_saturated_negative = false;
-			}
-
-			if (yaw_saturated_positive && actuator_sp(i + _first_tilt_idx) > actuator_min(i + _first_tilt_idx) + FLT_EPSILON) {
-				yaw_saturated_positive = false;
-			}
-		}
+		actuator_sp(i) = actuator_sp(i) <  math::radians(_servo_param[i].angle_min) ?  math::radians(_servo_param[i].angle_min) : actuator_sp(i);
+		actuator_sp(i) = actuator_sp(i) >  math::radians(_servo_param[i].angle_max) ?  math::radians(_servo_param[i].angle_max) : actuator_sp(i);
+		// PX4_INFO("%d) tilt_sp: %f", i, (double)tilt_sp[i]);
 	}
 
-	_yaw_tilt_saturation_flags.tilt_yaw_neg = yaw_saturated_negative;
-	_yaw_tilt_saturation_flags.tilt_yaw_pos = yaw_saturated_positive;
 }
 
 void ActuatorEffectivenessAndromeda::getUnallocatedControl(int matrix_index, control_allocator_status_s &status)

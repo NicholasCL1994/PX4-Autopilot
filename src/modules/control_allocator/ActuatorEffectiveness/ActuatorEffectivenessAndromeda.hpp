@@ -37,6 +37,12 @@
 #include "ActuatorEffectivenessRotors.hpp"
 #include "ActuatorEffectivenessTilts.hpp"
 
+#include <px4_platform_common/module_params.h>
+
+#include <uORB/topics/actuator_motors.h>
+#include <uORB/topics/actuator_servos.h>
+#include <uORB/Subscription.hpp>
+
 class ActuatorEffectivenessAndromeda : public ModuleParams, public ActuatorEffectiveness
 {
 public:
@@ -63,13 +69,14 @@ public:
 
 	const char *name() const override { return "Andromeda"; }
 
-	int numMatrices() { return 2; }
+	int numMatrices() const override { return 2; }
 
 	void getUnallocatedControl(int matrix_index, control_allocator_status_s &status) override;
 
 protected:
 	ActuatorVector _tilt_offsets;
-	ActuatorEffectivenessRotors _mc_rotors;
+	ActuatorEffectivenessRotors _mc_rotors_vertical;
+	ActuatorEffectivenessRotors _mc_rotors_lateral;
 	ActuatorEffectivenessTilts _tilts;
 	int _first_tilt_idx{0};
 
@@ -78,5 +85,25 @@ protected:
 		bool tilt_yaw_neg;
 	};
 
+	static constexpr int NUM_SERVOS_MAX = 4;
+	struct ServoParamHandles{
+		param_t angle_min;
+		param_t angle_max;
+	};
+	param_t _servo_count_handle;
+	int32_t _servo_count{0};
+
+	struct ServoParam{
+		float angle_min;
+		float angle_max;
+	};
+
 	YawTiltSaturationFlags _yaw_tilt_saturation_flags{};
+
+	ServoParamHandles _servo_param_handles[NUM_SERVOS_MAX];
+	ServoParam _servo_param[NUM_SERVOS_MAX];
+
+	uORB::Subscription _actuator_servos_0_sub{ORB_ID(actuator_servos)};
+	uORB::Subscription _actuator_motors_0_sub{ORB_ID(actuator_motors)};
+
 };
