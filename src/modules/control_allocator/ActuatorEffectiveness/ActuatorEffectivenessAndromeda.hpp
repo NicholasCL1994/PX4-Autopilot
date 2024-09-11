@@ -71,7 +71,7 @@ public:
 
 	int numMatrices() const override { return 2; }
 
-	void getUnallocatedControl(int matrix_index, control_allocator_status_s &status) override;
+	// void getUnallocatedControl(int matrix_index, control_allocator_status_s &status) override;
 
 protected:
 	ActuatorVector _tilt_offsets;

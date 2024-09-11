@@ -82,21 +82,22 @@ void ActuatorEffectivenessAndromeda::updateSetpoint(const matrix::Vector<float, 
 		actuator_sp(i) = actuator_sp(i) <  math::radians(_servo_param[i].angle_min) ?  math::radians(_servo_param[i].angle_min) : actuator_sp(i);
 		actuator_sp(i) = actuator_sp(i) >  math::radians(_servo_param[i].angle_max) ?  math::radians(_servo_param[i].angle_max) : actuator_sp(i);
 		// PX4_INFO("%d) tilt_sp: %f", i, (double)tilt_sp[i]);
+		PX4_INFO("servo_count is: %i", (int)_servo_count);
 	}
 
 }
 
-void ActuatorEffectivenessAndromeda::getUnallocatedControl(int matrix_index, control_allocator_status_s &status)
-{
-	// Note: the values '-1', '1' and '0' are just to indicate a negative,
-	// positive or no saturation to the rate controller. The actual magnitude is not used.
-	if (_yaw_tilt_saturation_flags.tilt_yaw_pos) {
-		status.unallocated_torque[2] = 1.f;
+// void ActuatorEffectivenessAndromeda::getUnallocatedControl(int matrix_index, control_allocator_status_s &status)
+// {
+// 	// Note: the values '-1', '1' and '0' are just to indicate a negative,
+// 	// positive or no saturation to the rate controller. The actual magnitude is not used.
+// 	if (_yaw_tilt_saturation_flags.tilt_yaw_pos) {
+// 		status.unallocated_torque[2] = 1.f;
 
-	} else if (_yaw_tilt_saturation_flags.tilt_yaw_neg) {
-		status.unallocated_torque[2] = -1.f;
+// 	} else if (_yaw_tilt_saturation_flags.tilt_yaw_neg) {
+// 		status.unallocated_torque[2] = -1.f;
 
-	} else {
-		status.unallocated_torque[2] = 0.f;
-	}
-}
+// 	} else {
+// 		status.unallocated_torque[2] = 0.f;
+// 	}
+// }

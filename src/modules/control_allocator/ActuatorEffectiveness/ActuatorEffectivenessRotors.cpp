@@ -147,7 +147,7 @@ ActuatorEffectivenessRotors::addActuators(Configuration &configuration)
 					configuration.effectiveness_matrices[configuration.selected_matrix],
 					configuration.num_actuators_matrix[configuration.selected_matrix],
 					0);
-			PX4_INFO("VERT \n");
+			// PX4_INFO("VERT \n");
 			// PX4_INFO("num_actuators: %d \n", num_actuators);
 		}
 		else if(configuration.selected_matrix == 1){
@@ -156,7 +156,7 @@ ActuatorEffectivenessRotors::addActuators(Configuration &configuration)
 					configuration.effectiveness_matrices[configuration.selected_matrix],
 					configuration.num_actuators_matrix[configuration.selected_matrix],
 					1);
-			PX4_INFO("LAT \n");
+			// PX4_INFO("LAT \n");
 			// PX4_INFO("num_actuators: %d \n", num_actuators);
 		}
 	} else {

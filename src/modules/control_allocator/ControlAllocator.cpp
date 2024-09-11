@@ -430,6 +430,8 @@ ControlAllocator::Run()
 		c[0](4) = _thrust_sp(1);
 		c[0](5) = _thrust_sp(2);
 
+		c[0].print();
+
 		if (_num_control_allocation > 1) {
 			if (_vehicle_torque_setpoint1_sub.copy(&vehicle_torque_setpoint)) {
 				c[1](0) = vehicle_torque_setpoint.xyz[0];
@@ -476,19 +478,22 @@ ControlAllocator::Run()
 			_control_allocation[0]->setControlSetpoint(c[0]);
 			_control_allocation[0]->allocate();
 			vertical_actuator_sp = _control_allocation[0]->getActuatorSetpoint();
+			PX4_INFO("vert_sp %d : %f ", 0, (double)vertical_actuator_sp(0));
 
 			//Lateral forces
 			_control_allocation[1]->setControlSetpoint(c[0]);
 			_control_allocation[1]->allocate();
 			lateral_actuator_sp = _control_allocation[1]->getActuatorSetpoint();//_control_allocation[1]->getActuatorSetpoint();
-			// PX4_INFO("v_sp %d : %f ", 0, (double)lateral_actuator_sp(0));
+			PX4_INFO("lat_sp %d : %f ", 0, (double)lateral_actuator_sp(0));
+
+			// PX4_INFO("num motors = %i ; num servos = %i", (int)_num_actuators[0], (int)_num_actuators[1]);
 
 			//Rotors
 			for(int i=0; i<_num_actuators[0]; i++){
 
 				actuator_sp(i) = sqrtf( sqrtf( powf(vertical_actuator_sp(i),2) + powf(lateral_actuator_sp(i),2) ) );
 				// actuator_sp(i) = vertical_actuator_sp(i) + lateral_actuator_sp(i);
-				//PX4_INFO("motor: %f ", (double)actuator_sp(i));
+				// PX4_INFO("motor: %f ", (double)actuator_sp(i));
 			}
 
 			//Tilts
@@ -535,7 +540,8 @@ ControlAllocator::Run()
 
 			_actuator_effectiveness->updateSetpoint(c[0], 0, _control_allocation[0]->_actuator_sp,
 						 _control_allocation[0]->getActuatorMin(), _control_allocation[0]->getActuatorMax());
-			// _actuator_effectiveness->updateSetpoint(c[1], 1, _control_allocation[1]->_actuator_sp);
+			_actuator_effectiveness->updateSetpoint(c[0], 1, _control_allocation[1]->_actuator_sp,
+						_control_allocation[0]->getActuatorMin(), _control_allocation[0]->getActuatorMax());
 
 			if (_has_slew_rate) {
 				_control_allocation[0]->applySlewRateLimit(dt);
